@@ -142,7 +142,7 @@ def confusion_matrix_func(model_name,_X_train, _X_test, _y_train, _y_test):
 
 @st.cache_data
 def reset_feature():
-    path = "C:/Users/moyin/OneDrive/Desktop/ASU/MFG 598/PROJECT/data/amazon_reviews.csv"
+    path = "data/amazon_reviews.csv"
     df = pd.read_csv(path)
     df['verified_reviews'].replace(' ', np.nan, inplace=True)
     df.dropna(subset=['verified_reviews'], inplace=True)
