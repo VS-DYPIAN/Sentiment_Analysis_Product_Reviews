@@ -1,6 +1,7 @@
 import streamlit as st
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
+import tensorflow as tf
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -164,7 +165,7 @@ def reset_feature():
     return X_train, X_test, y_train, y_test,vectorizer
 
 
-# @st.cache_resource
+@st.cache_resource
 def load_transformer():
     sentiment_classifier = pipeline(
     model="distilbert-base-uncased-finetuned-sst-2-english",
