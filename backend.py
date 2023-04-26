@@ -12,6 +12,7 @@ from sklearn.metrics import classification_report
 import nltk
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
+nltk.download('omw-1.4')
 import time
 from nltk.corpus import stopwords
 import seaborn as sns
