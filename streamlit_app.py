@@ -1,34 +1,33 @@
 #import libraries
-import streamlit as st
-import pandas as pd
-import numpy as np
-import pickle
-import matplotlib.pyplot as plt
-import string
-import nltk
 import time
 from wordcloud import WordCloud
-import backend as backend
-from nltk.corpus import stopwords
-nltk.download('punkt')
-import plotly.graph_objects as go
+from sklearn.svm import LinearSVC
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import BernoulliNB
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
-import imblearn
-from imblearn.over_sampling import RandomOverSampler
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import nltk
+nltk.download('punkt')
+import plotly.graph_objects as go
+import backend
+
+
+
+
 
 
 # Function to load reviews data
 @st.cache_data
 def load_reviews():
+    """
+    Loads the amazon reviews dataset
+    """
     return backend.load_dataset()
 
 # Load reviews data
 df = backend.load_dataset()
- 
 
 # Create streamlit app header
 st.header('Sentiment Analysis App')
@@ -39,43 +38,43 @@ Menu_Options = st.sidebar.selectbox('Required Task',('Data Visualization','Predi
 # Data visualization menu options
 if Menu_Options == 'Data Visualization':
     st.write("Choose any of the options on the side bar to perform Data Visualization")
-    Visualization_options = st.sidebar.selectbox('Data Visualization',('Word Cloud','Labels Analysis','Confusion Matrix'))
+    Visualization_options = st.sidebar.selectbox('Data Visualization',('Word Cloud','Label Analysis','Confusion Matrix'))
 
     # Word cloud option
     if Visualization_options == 'Word Cloud':
-        total = df['verified_reviews'].tolist()
-        total = ' '.join(total)
+        TOTAL = df['verified_reviews'].tolist()
+        TOTAL = ' '.join(TOTAL)
         good_reviews = df[df['feedback'] == 1]
         bad_reviews = df[df['feedback'] == 0]
         good = good_reviews['verified_reviews'].tolist()
         bad = bad_reviews['verified_reviews'].tolist()
-        good_str = ' '.join(good)
-        bad_str = ' '.join(bad)
+        GOOD_STR = ' '.join(good)
+        BAD_STR = ' '.join(bad)
         emotion = st.sidebar.selectbox('Choose Sentiment',('Postive','Negative','Total'))
 
         # Positive sentiment word cloud
         if emotion == 'Postive':
             fig,ax = plt.subplots()
-            plt.imshow(WordCloud().generate(good_str),interpolation='bilinear')
+            plt.imshow(WordCloud().generate(GOOD_STR),interpolation='bilinear')
             plt.axis('off')
             st.pyplot(fig)
 
         # Negative sentiment word cloud    
         if emotion == 'Negative':
             fig,ax = plt.subplots()
-            plt.imshow(WordCloud().generate(bad_str),interpolation='bilinear')
+            plt.imshow(WordCloud().generate(BAD_STR),interpolation='bilinear')
             plt.axis('off')
             st.pyplot(fig)
 
         # Total word cloud    
-        if emotion == 'Total':
+        if emotion == 'TOTAL':
             fig,ax = plt.subplots()
-            plt.imshow(WordCloud().generate(total),interpolation='bilinear')
+            plt.imshow(WordCloud().generate(TOTAL),interpolation='bilinear')
             plt.axis('off')
             st.pyplot(fig)
 
     # Labels Analysis option       
-    if Visualization_options == 'Labels Analysis':
+    if Visualization_options == 'Label Analysis':
         df['variation'] = df['variation'].str.strip()
         tuple_variations = tuple(set(df['variation']))
         type_select = st.selectbox("Pick a model type",tuple_variations)
@@ -89,7 +88,7 @@ if Menu_Options == 'Data Visualization':
         fig.add_trace(go.Bar(x=['Negative Reviews'], y=[feedback_counts.get(0, 0)], name='Negative', marker=dict(color='red')))
         fig.add_trace(go.Bar(x=['Positive Reviews'], y=[feedback_counts.get(1, 0)], name='Positive', marker=dict(color='green')))
 
-        # add chart title and axis labels
+        # add chart title and axis LABELS
         fig.update_layout(title='Feedback counts for Charcoal Fabric', xaxis_title='Feedback', yaxis_title='Count')
 
         # display the chart in Streamlit
@@ -105,21 +104,21 @@ if Menu_Options == 'Data Visualization':
             model_list = [BernoulliNB,LogisticRegression,GradientBoostingClassifier,LinearSVC]
 
             if visual_models_cm == 'Logistic Regression':
-                model_name = model_list[1]
-                backend.confusion_matrix_func(model_name,X_train, X_test, y_test, y_train)
+                ModelName = model_list[1]
+                backend.confusion_matrix_func(ModelName,X_train, X_test, y_test, y_train)
                 
             if visual_models_cm == 'GradientBoostingClassifier':
-                model_name = model_list[2]
-                backend.confusion_matrix_func(model_name,X_train, X_test, y_test, y_train)
+                ModelName = model_list[2]
+                backend.confusion_matrix_func(ModelName,X_train, X_test, y_test, y_train)
                 
             if visual_models_cm == 'LinearSVC':
-                model_name = model_list[3]
-                backend.confusion_matrix_func(model_name,X_train, X_test, y_test, y_train)
+                ModelName = model_list[3]
+                backend.confusion_matrix_func(ModelName,X_train, X_test, y_test, y_train)
 
                 
             if visual_models_cm == 'BernoulliNB':
-                model_name = model_list[0]
-                backend.confusion_matrix_func(model_name,X_train, X_test, y_test, y_train)
+                ModelName = model_list[0]
+                backend.confusion_matrix_func(ModelName,X_train, X_test, y_test, y_train)
             
         else:
             pass
@@ -142,17 +141,17 @@ if Menu_Options == 'Prediction':
 
         if predict_sentiment:
             with st.spinner('Evaluating model performance and sentiment analysis'):
-                progress_text = "Operation in progress. Please wait."
-                my_bar = st.progress(0, text=progress_text)
+                PROGRESS_TEXT = "Operation in progress. Please wait."
+                my_bar = st.progress(0, text=PROGRESS_TEXT)
 
                 for percent_complete in range(100):
                     time.sleep(0.1)
-                    my_bar.progress(percent_complete + 1, text=progress_text)
+                    my_bar.progress(percent_complete + 1, text=PROGRESS_TEXT)
 
                 data,result,train_AUC,test_AUC = backend.predict_model(LogisticRegression,user_input,X_train,X_test,y_train, y_test,vectorizer,C=C,max_lr = max_lr, n_jobs = n_jobs)
-                labels = 'Sentiment'
+                LABELS = 'Sentiment'
                 values = data[0][2]
-                st.metric(label=labels, value=values, delta=None)
+                st.metric(label=LABELS, value=values, delta=None)
                 
                 st.subheader("Model Performance")
                 metric_data = pd.DataFrame(result)
@@ -172,9 +171,9 @@ if Menu_Options == 'Prediction':
 
         if predict_sentiment:
             data,result,train_AUC,test_AUC = backend.predict_model(GradientBoostingClassifier,user_input,X_train,X_test,y_train, y_test,vectorizer,n_estim=n_estim,max_feat = max_feat)
-            labels = 'Sentiment'
+            LABELS = 'Sentiment'
             values = data[0][2]
-            st.metric(label=labels, value=values, delta=None)
+            st.metric(label=LABELS, value=values, delta=None)
             
             st.subheader("Model Performance")
             metric_data = pd.DataFrame(result)
@@ -191,9 +190,9 @@ if Menu_Options == 'Prediction':
         max_iterations = st.slider('Maximum Number of Iterations',1000, 20000, (1000))
         if predict_sentiment:
             data,result,train_AUC,test_AUC = backend.predict_model(LinearSVC,user_input,X_train,X_test,y_train, y_test,vectorizer,C = C,max_iterations = max_iterations)
-            labels = 'Sentiment'
+            LABELS = 'Sentiment'
             values = data[0][2]
-            st.metric(label=labels, value=values, delta=None)
+            st.metric(label=LABELS, value=values, delta=None)
             st.subheader("Model Performance")
             metric_data = pd.DataFrame(result)
             st.table(metric_data)
@@ -209,10 +208,9 @@ if Menu_Options == 'Prediction':
         if predict_sentiment:
             data,result,train_AUC,test_AUC = backend.predict_model(BernoulliNB,user_input,X_train,X_test,y_train, y_test,vectorizer,alpha=lm)
            
-            labels = 'Sentiment'
+            LABELS = 'Sentiment'
             values = data[0][2]
-            st.metric(label=labels, value=values, delta=None)
-        
+            st.metric(label=LABELS, value=values, delta=None)
             st.subheader("Model Performance")
             metric_data = pd.DataFrame(result)
             st.table(metric_data)
@@ -228,14 +226,8 @@ if Menu_Options == 'Prediction':
 
         if predict_sentiment:
             data = transformer(user_input)
-            labels = 'Sentiment'
+            LABELS = 'Sentiment'
             values = max([label for label in data[0]], key=lambda x: x['score'])['label']
-            st.metric(label=labels, value=values, delta=None)
-
-            # result,train_AUC,test_AUC = backend.predict_pipeline(transformer,X_train, X_test, y_train, y_test)
-            # metric_data = pd.DataFrame(result)
-            # st.table(metric_data)
-            # st.write(f"ROC_AUC_Score (Train) {train_AUC}")
-            # st.write(f"ROC_AUC_Score (Test) {test_AUC}")
+            st.metric(label=LABELS, value=values, delta=None)
 
 
