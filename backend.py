@@ -164,7 +164,7 @@ def reset_feature():
     return X_train, X_test, y_train, y_test,vectorizer
 
 
-@st.cache_resource
+# @st.cache_resource
 def load_transformer():
     sentiment_classifier = pipeline(
     model="distilbert-base-uncased-finetuned-sst-2-english",
