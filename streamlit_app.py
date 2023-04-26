@@ -10,6 +10,7 @@ import time
 from wordcloud import WordCloud
 import backend as backend
 from nltk.corpus import stopwords
+nltk.download('punkt')
 import plotly.graph_objects as go
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression

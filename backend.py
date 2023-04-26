@@ -10,6 +10,7 @@ import pandas as pd
 import pickle
 from sklearn.metrics import classification_report
 import nltk
+nltk.download('punkt')
 import time
 from nltk.corpus import stopwords
 import seaborn as sns
