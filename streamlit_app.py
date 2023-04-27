@@ -67,7 +67,7 @@ if Menu_Options == 'Data Visualization':
             st.pyplot(fig)
 
         # Total word cloud    
-        if emotion == 'TOTAL':
+        if emotion == 'Total':
             fig,ax = plt.subplots()
             plt.imshow(WordCloud().generate(TOTAL),interpolation='bilinear')
             plt.axis('off')
